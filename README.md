@@ -1,4 +1,4 @@
-# Trabajo Práctico Número 2 - Test Driven Development
+# Trabajo Práctico Número 5 - Test Driven Development + CICD
 
 Aplicar técnicas de TDD para el desarrollo de una API para controlar LEDs. Los requerimientos del driver son los siguientes:
 * Maneja 16 LEDs de dos estados (encendido y apagado).
@@ -32,4 +32,8 @@ pre-commit install
 4. Para compilar el código y correr los tests:
 ```
 ceedling
+```
+5. Para correr reporte de coverage:
+```
+ceedling clobber gcov:all utils:gcov
 ```

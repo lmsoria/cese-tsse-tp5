@@ -33,7 +33,7 @@ SPDX-License-Identifier: MIT
 /* === Private data type declarations ========================================================== */
 /* === Private variable declarations =========================================================== */
 
-static uint16_t leds_port = 0xFF;
+static uint16_t leds_port = 0xFFFF;
 
 /* === Private function declarations =========================================================== */
 /* === Public variable definitions ============================================================= */
@@ -48,10 +48,10 @@ void setUp(void) {
 /// @brief Al iniciar el controlador todos los bits de los LEDs deben quedar en cero,
 ///  sin importar el estado anterior.
 void test_initial_state(void) {
-    uint16_t leds_port = 0xFF;
+    uint16_t leds_port = 0xFFFF;
 
-    TEST_ASSERT_EQUAL_INT(0x00, leds_init(&leds_port));
-    TEST_ASSERT_EQUAL_UINT16(0x00, leds_port);
+    TEST_ASSERT_EQUAL_INT(0x0000, leds_init(&leds_port));
+    TEST_ASSERT_EQUAL_UINT16(0x0000, leds_port);
 }
 
 /// @brief Con todos los LEDs apagados prender el LED3, y verificar que el bit 3 está en alto
@@ -59,7 +59,7 @@ void test_initial_state(void) {
 void test_single_led_on(void) {
     static const int LED = 3;
 
-    TEST_ASSERT_EQUAL_INT(0x00, leds_turn_on_single(LED));
+    TEST_ASSERT_EQUAL_INT(0x0000, leds_turn_on_single(LED));
     TEST_ASSERT_BIT_HIGH(LED - 1, leds_port);
     TEST_ASSERT_BITS_LOW(~(1 << (LED - 1)), leds_port);
 }
@@ -71,8 +71,8 @@ void test_single_led_off(void) {
 
     leds_turn_on_single(LED);
 
-    TEST_ASSERT_EQUAL_INT(0x00, leds_turn_off_single(LED));
-    TEST_ASSERT_EQUAL_UINT16(0x00, leds_port);
+    TEST_ASSERT_EQUAL_INT(0x0000, leds_turn_off_single(LED));
+    TEST_ASSERT_EQUAL_UINT16(0x0000, leds_port);
 }
 
 /// @brief Prender el LED5 dos veces, prender el LED7 una vez, apagar el LED5 una vez y apagar el
@@ -101,40 +101,53 @@ void test_single_led_get_status_on(void) {
     TEST_ASSERT_EQUAL_INT(1, leds_get_status_single(LED));
 }
 
-/// @brief Prender todos los LEDs y verificar que al consultar el estado del puerto sea 0xFF
+/// @brief Prender todos los LEDs y verificar que al consultar el estado del puerto sea 0xFFFF
 void test_all_leds_turn_on(void) {
 
     TEST_ASSERT_EQUAL_INT(0, leds_turn_on_all());
-    TEST_ASSERT_EQUAL_UINT16(0xFF, leds_get_status_all());
+    TEST_ASSERT_EQUAL_UINT16(0xFFFF, leds_get_status_all());
 }
 
 /// @brief Apagar todos los LEDs (prendidos previamente) y verificar que al consultar el estado del
-/// puerto sea 0x00
+/// puerto sea 0x0000
 void test_all_leds_turn_off(void) {
 
     leds_turn_on_all();
     leds_turn_off_all();
-    TEST_ASSERT_EQUAL_UINT16(0x00, leds_get_status_all());
+    TEST_ASSERT_EQUAL_UINT16(0x0000, leds_get_status_all());
 }
 
 /// @brief Deinicializar el puerto de los LEDs, y prender todos los LEDs.
 /// El programa no debería sufrir una excepción y la función debe retornar -1.
 /// Por otro lado, el valor de `leds_port` deberá continuar en cero.
+/// Repetir lo mismo para todas las funciones de seteo: `leds_turn_off_all()`,
+/// `leds_turn_on_single()` y `leds_turn_off_single()`
 void test_uninitialized_led_port(void) {
+    static const int LED = 15;
+
     leds_deinit();
 
     TEST_ASSERT_EQUAL_INT(-1, leds_turn_on_all());
-    TEST_ASSERT_EQUAL_UINT16(0x00, leds_port);
+    TEST_ASSERT_EQUAL_UINT16(0x0000, leds_port);
+
+    TEST_ASSERT_EQUAL_INT(-1, leds_turn_off_all());
+
+    TEST_ASSERT_EQUAL_INT(-1, leds_turn_on_single(LED));
+
+    TEST_ASSERT_EQUAL_INT(-1, leds_turn_off_single(LED));
 }
 
 /// @brief Deinicializar el puerto de los LEDs, y consultar el estado del LED3.
 /// El programa no debería sufrir una excepción y la función `leds_get_status_single()` debe
 /// retornar -1.
-void test_uninitialized_led_port_get_single_value(void) {
+/// Repetir lo mismo llamando a `leds_get_status_all()`
+void test_uninitialized_led_port_get_status(void) {
     static const int LED = 3;
     leds_deinit();
 
     TEST_ASSERT_EQUAL_INT(-1, leds_get_status_single(LED));
+
+    TEST_ASSERT_EQUAL_INT(-1, leds_get_status_all());
 }
 
 /* === End of documentation ==================================================================== */

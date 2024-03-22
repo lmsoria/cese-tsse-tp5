@@ -32,10 +32,16 @@ SPDX-License-Identifier: MIT
 
 #define LED_TO_BIT(led) (1 << led - 1)
 
+// Macro para retornar en caso de que led_port sea NULL
+#define CHECK_LED_PORT(port)                                                                       \
+    if (!led_port) {                                                                               \
+        return -1;                                                                                 \
+    }
+
 /* === Private data type declarations ========================================================== */
 /* === Private variable declarations =========================================================== */
 
-static uint16_t * led_port;
+static uint16_t * led_port = NULL;
 
 /* === Private function declarations =========================================================== */
 /* === Public variable definitions ============================================================= */
@@ -45,65 +51,53 @@ static uint16_t * led_port;
 
 int leds_init(uint16_t * port) {
     led_port = port;
-    *led_port = 0x00;
+    leds_turn_off_all();
     return 0;
 }
 
 void leds_deinit(void) {
-    *led_port = 0x00;
+    leds_turn_off_all();
     led_port = NULL;
 }
 
 int leds_turn_on_single(uint16_t led) {
-    if (led_port) {
-        *led_port |= LED_TO_BIT(led);
-        return 0;
-    } else {
-        return -1;
-    }
+    CHECK_LED_PORT(led_port);
+
+    *led_port |= LED_TO_BIT(led);
+    return 0;
 }
 
 int leds_turn_off_single(uint16_t led) {
-    if (led_port) {
-        *led_port &= ~LED_TO_BIT(led);
-        return 0;
-    } else {
-        return -1;
-    }
+    CHECK_LED_PORT(led_port);
+
+    *led_port &= ~LED_TO_BIT(led);
+    return 0;
 }
 
 int leds_get_status_single(uint16_t led) {
-    if (led_port) {
-        return (*led_port & LED_TO_BIT(led)) != 0;
-    } else {
-        return -1;
-    }
+    CHECK_LED_PORT(led_port);
+
+    return (*led_port & LED_TO_BIT(led)) != 0;
 }
 
 int leds_turn_on_all(void) {
-    if (led_port) {
-        *led_port = 0xFF;
-        return 0;
-    } else {
-        return -1;
-    }
+    CHECK_LED_PORT(led_port);
+
+    *led_port = 0xFFFF;
+    return 0;
 }
 
 int leds_turn_off_all(void) {
-    if (led_port) {
-        *led_port = 0x00;
-        return 0;
-    } else {
-        return -1;
-    }
+    CHECK_LED_PORT(led_port);
+
+    *led_port = 0x0000;
+    return 0;
 }
 
 int leds_get_status_all(void) {
-    if (led_port) {
-        return *led_port;
-    } else {
-        return -1;
-    }
+    CHECK_LED_PORT(led_port);
+
+    return *led_port;
 }
 
 /* === End of documentation ==================================================================== */

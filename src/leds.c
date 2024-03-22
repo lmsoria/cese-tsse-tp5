@@ -51,12 +51,12 @@ static uint16_t * led_port = NULL;
 
 int leds_init(uint16_t * port) {
     led_port = port;
-    *led_port = 0x00;
+    leds_turn_off_all();
     return 0;
 }
 
 void leds_deinit(void) {
-    *led_port = 0x00;
+    leds_turn_off_all();
     led_port = NULL;
 }
 

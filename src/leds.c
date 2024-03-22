@@ -83,14 +83,14 @@ int leds_get_status_single(uint16_t led) {
 int leds_turn_on_all(void) {
     CHECK_LED_PORT(led_port);
 
-    *led_port = 0xFF;
+    *led_port = 0xFFFF;
     return 0;
 }
 
 int leds_turn_off_all(void) {
     CHECK_LED_PORT(led_port);
 
-    *led_port = 0x00;
+    *led_port = 0x0000;
     return 0;
 }
 

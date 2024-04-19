@@ -97,14 +97,14 @@ void test_multiple_leds_on_and_off(void) {
 void test_single_led_get_status_on(void) {
     static const int LED = 3;
 
-    TEST_ASSERT_EQUAL_INT(0, leds_turn_on_single(LED));
+    TEST_ASSERT_EQUAL_INT(LED_ERROR_OK, leds_turn_on_single(LED));
     TEST_ASSERT_EQUAL_INT(1, leds_get_status_single(LED));
 }
 
 /// @test Prender todos los LEDs y verificar que al consultar el estado del puerto sea 0xFFFF
 void test_all_leds_turn_on(void) {
 
-    TEST_ASSERT_EQUAL_INT(0, leds_turn_on_all());
+    TEST_ASSERT_EQUAL_INT(LED_ERROR_OK, leds_turn_on_all());
     TEST_ASSERT_EQUAL_UINT16(0xFFFF, leds_get_status_all());
 }
 
@@ -118,8 +118,8 @@ void test_all_leds_turn_off(void) {
 }
 
 /// @test Deinicializar el puerto de los LEDs, y prender todos los LEDs.
-/// El programa no debería sufrir una excepción y la función debe retornar -1.
-/// Por otro lado, el valor de `leds_port` deberá continuar en cero.
+/// El programa no debería sufrir una excepción y la función debe retornar
+/// LED_ERROR_UNINITIALIZED_PORT. Por otro lado, el valor de `leds_port` deberá continuar en cero.
 /// Repetir lo mismo para todas las funciones de seteo: `leds_turn_off_all()`,
 /// `leds_turn_on_single()` y `leds_turn_off_single()`
 void test_uninitialized_led_port(void) {
@@ -127,27 +127,27 @@ void test_uninitialized_led_port(void) {
 
     leds_deinit();
 
-    TEST_ASSERT_EQUAL_INT(-1, leds_turn_on_all());
+    TEST_ASSERT_EQUAL_INT(LED_ERROR_UNINITIALIZED_PORT, leds_turn_on_all());
     TEST_ASSERT_EQUAL_UINT16(0x0000, leds_port);
 
-    TEST_ASSERT_EQUAL_INT(-1, leds_turn_off_all());
+    TEST_ASSERT_EQUAL_INT(LED_ERROR_UNINITIALIZED_PORT, leds_turn_off_all());
 
-    TEST_ASSERT_EQUAL_INT(-1, leds_turn_on_single(LED));
+    TEST_ASSERT_EQUAL_INT(LED_ERROR_UNINITIALIZED_PORT, leds_turn_on_single(LED));
 
-    TEST_ASSERT_EQUAL_INT(-1, leds_turn_off_single(LED));
+    TEST_ASSERT_EQUAL_INT(LED_ERROR_UNINITIALIZED_PORT, leds_turn_off_single(LED));
 }
 
 /// @test Deinicializar el puerto de los LEDs, y consultar el estado del LED3.
 /// El programa no debería sufrir una excepción y la función `leds_get_status_single()` debe
-/// retornar -1.
+/// retornar LED_ERROR_UNINITIALIZED_PORT.
 /// Repetir lo mismo llamando a `leds_get_status_all()`
 void test_uninitialized_led_port_get_status(void) {
     static const int LED = 3;
     leds_deinit();
 
-    TEST_ASSERT_EQUAL_INT(-1, leds_get_status_single(LED));
+    TEST_ASSERT_EQUAL_INT(LED_ERROR_UNINITIALIZED_PORT, leds_get_status_single(LED));
 
-    TEST_ASSERT_EQUAL_INT(-1, leds_get_status_all());
+    TEST_ASSERT_EQUAL_INT(LED_ERROR_UNINITIALIZED_PORT, leds_get_status_all());
 }
 
 /* === End of documentation ==================================================================== */

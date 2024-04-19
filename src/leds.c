@@ -35,7 +35,7 @@ SPDX-License-Identifier: MIT
 // Macro para retornar en caso de que led_port sea NULL
 #define CHECK_LED_PORT(port)                                                                       \
     if (!led_port) {                                                                               \
-        return -1;                                                                                 \
+        return LED_ERROR_UNINITIALIZED_PORT;                                                       \
     }
 
 /* === Private data type declarations ========================================================== */
@@ -52,7 +52,7 @@ static uint16_t * led_port = NULL;
 int leds_init(uint16_t * port) {
     led_port = port;
     leds_turn_off_all();
-    return 0;
+    return LED_ERROR_OK;
 }
 
 void leds_deinit(void) {
@@ -64,14 +64,14 @@ int leds_turn_on_single(uint16_t led) {
     CHECK_LED_PORT(led_port);
 
     *led_port |= LED_TO_BIT(led);
-    return 0;
+    return LED_ERROR_OK;
 }
 
 int leds_turn_off_single(uint16_t led) {
     CHECK_LED_PORT(led_port);
 
     *led_port &= ~LED_TO_BIT(led);
-    return 0;
+    return LED_ERROR_OK;
 }
 
 int leds_get_status_single(uint16_t led) {
@@ -84,14 +84,14 @@ int leds_turn_on_all(void) {
     CHECK_LED_PORT(led_port);
 
     *led_port = 0xFFFF;
-    return 0;
+    return LED_ERROR_OK;
 }
 
 int leds_turn_off_all(void) {
     CHECK_LED_PORT(led_port);
 
     *led_port = 0x0000;
-    return 0;
+    return LED_ERROR_OK;
 }
 
 int leds_get_status_all(void) {

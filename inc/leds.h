@@ -36,6 +36,12 @@ extern "C" {
 #endif
 
 /* === Public macros definitions =============================================================== */
+
+/// Indica que no hubo errores por parte de la API.
+#define LED_ERROR_OK (0)
+/// Indica que hubo un error al no encontrarse el puerto inicializado
+#define LED_ERROR_UNINITIALIZED_PORT (-1)
+
 /* === Public data type declarations =========================================================== */
 /* === Public variable declarations ============================================================ */
 /* === Public function declarations ============================================================ */
